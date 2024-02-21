@@ -22,11 +22,13 @@ env.reset()
 
 # Setup the Q table and hyperparameters
 Q = np.zeros([env.observation_space.n, env.action_space.n])
-LEARNING_RATE = 0.8
-DISCOUNT_FACTOR = 0.95
-EPISODES = 100000
-EXPLORATION_RATE = 0.25
-EXPLORATION_DECAY = 0.0001
+LEARNING_RATE = 0.1
+DISCOUNT_FACTOR = 0.99
+EPISODES = 50000
+EXPLORATION_RATE = 1
+EXPLORATION_DECAY = 0.005
+MAX_EXPLORATION_RATE = 1
+MIN_EXPLORATION_RATE = 0.01
 
 # outcomes = []
 # time_per_episode = []
@@ -80,11 +82,11 @@ for i in range(EPISODES):
         if truncated:
             break
 
-    EXPLORATION_RATE = max(EXPLORATION_RATE - EXPLORATION_DECAY, 0.1)
+    EXPLORATION_RATE = MIN_EXPLORATION_RATE + (MAX_EXPLORATION_RATE - MIN_EXPLORATION_RATE) * np.exp(-EXPLORATION_DECAY * i)
 
     # time_per_episode.append(time.time() - last_episode_start)
 
-episodes = 100
+episodes = 1000
 nb_success = 0
 
 # Evaluation
