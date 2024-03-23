@@ -1,3 +1,7 @@
+# Dylan Zemlin | 113562763
+# Machine Learning (CS 5033)
+# Reinforcement Learning Project | Q-Learning Algorithm
+
 import gymnasium as gym
 import numpy as np
 import time
@@ -5,17 +9,9 @@ import time
 # Set the environment parameters
 MAP_NAME = "8x8"
 IS_SLIPPERY = True
-RENDER_MODE = "none"
-
-# Helper ENUM for action space
-class Action:
-    LEFT = 0
-    DOWN = 1
-    RIGHT = 2
-    UP = 3
 
 # Create the environment
-env = gym.make("FrozenLake-v1", desc=None, map_name = MAP_NAME, is_slippery = IS_SLIPPERY, render_mode = RENDER_MODE)
+env = gym.make("FrozenLake-v1", desc=None, map_name = MAP_NAME, is_slippery = IS_SLIPPERY)
 
 # Reset the environment
 env.reset()
@@ -24,26 +20,22 @@ env.reset()
 Q = np.zeros([env.observation_space.n, env.action_space.n])
 LEARNING_RATE = 0.1
 DISCOUNT_FACTOR = 0.99
-EPISODES = 50000
+EPISODES = 25000
 EXPLORATION_RATE = 1
 EXPLORATION_DECAY = 0.005
 MAX_EXPLORATION_RATE = 1
 MIN_EXPLORATION_RATE = 0.01
 
-# outcomes = []
-# time_per_episode = []
-# last_episode_start = 0
 
 def format_as_minutes_and_seconds(seconds):
     minutes = int(seconds / 60)
     seconds = int(seconds % 60)
     return f"{minutes}m {seconds}s"
 
-def save_q_state():
-    np.save("q_table.npy", Q)
 
-def load_q_state():
-    return np.load("q_table.npy")
+# Start the timer and initialize the exploration rates list
+start_time = time.time()
+exploration_rates = []
 
 # Start training
 for i in range(EPISODES):
@@ -55,7 +47,6 @@ for i in range(EPISODES):
 
     # last_episode_start = time.time()
     observation, rInfo = env.reset()
-    # outcomes.append("Fail")
     while True:
         # While we are training, we want to explore the environment so we introduce some randomness into the actions
         # even if the Q table specifies a "better" action
@@ -76,15 +67,20 @@ for i in range(EPISODES):
 
         # If the episode is terminated, we break the loop
         if terminated:
-            # outcomes[-1] = "Success" if reward > 0 else "Fail"
             break
 
         if truncated:
             break
 
+    # Exponential decay of the exploration rate
     EXPLORATION_RATE = MIN_EXPLORATION_RATE + (MAX_EXPLORATION_RATE - MIN_EXPLORATION_RATE) * np.exp(-EXPLORATION_DECAY * i)
-
-    # time_per_episode.append(time.time() - last_episode_start)
+    exploration_rates.append(EXPLORATION_RATE)
+        
+    # Linear decay of the exploration rate
+    # EXPLORATION_RATE = EXPLORATION_RATE - EXPLORATION_DECAY
+    # EXPLORATION_RATE = max(EXPLORATION_RATE, MIN_EXPLORATION_RATE)
+    # EXPLORATION_RATE = min(EXPLORATION_RATE, MAX_EXPLORATION_RATE)
+    # exploration_rates.append(EXPLORATION_RATE)
 
 episodes = 1000
 nb_success = 0
@@ -113,7 +109,9 @@ for _ in range(episodes):
         if truncated:
             break
 
+# Print the time it took to train the agent
+end_time = time.time()
+print(f"\nTraining took {format_as_minutes_and_seconds(end_time - start_time)}")
+
 # Let's check our success rate!
 print (f"Success rate = {nb_success/episodes*100}%")
-
-save_q_state()
