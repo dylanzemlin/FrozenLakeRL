@@ -28,6 +28,10 @@ MIN_EXPLORATION_RATE = 0.0001
 
 # Start training
 for i in range(EPISODES):
+    # Print the progress
+    if i % 10000 == 0 and i != 0:
+        print(str(i) + "/" +str(EPISODES))
+
     # Reset the environment
     observation, rInfo = env.reset()
 
@@ -46,9 +50,13 @@ for i in range(EPISODES):
         # Take the action and observe the outcome
         new_state, reward, terminated, truncated, info = env.step(action)
 
-        # Update the Q table with the new information and reward
+        # Update the reward for the episode
         x += reward
+
+        # Store the state and action for updating the Q table
         y.append((observation, action))
+
+        # Update the observation
         observation = new_state
 
         # If the episode is terminated, we break the loop
@@ -58,15 +66,11 @@ for i in range(EPISODES):
     # Update the reward list
     rList.append(x)
 
-    # Update the Q table with the new information and reward
+    # Update the Q table using the state and action pairs as well as the reward for the episode
     for (state, action) in y:
         Q2[state, action] += 1
         LEARNING_RATE = 1 / Q2[state, action]
         Q[state, action] = Q[state, action] + LEARNING_RATE * (x - Q[state, action])
-
-    # Print the progress
-    if i % 10000 == 0 and i != 0:
-        print(str(i) + "/" +str(EPISODES))
 
     # Update the exploration rate via a exponential decay function
     EXPLORATION_RATE = MIN_EXPLORATION_RATE + (MAX_EXPLORATION_RATE - MIN_EXPLORATION_RATE) * np.exp(-EXPLORATION_DECAY * i)
