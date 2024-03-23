@@ -42,10 +42,7 @@ for i in range(EPISODES):
     # Print the current episode
     if i % 10000 == 0:
         print(f"\rEpisode {i+1}/{EPISODES}", end="")
-    # if len(time_per_episode) > 0:
-        # print(f" - ETA: {format_as_minutes_and_seconds(np.mean(time_per_episode) * (EPISODES - i))}")
 
-    # last_episode_start = time.time()
     observation, rInfo = env.reset()
     while True:
         # While we are training, we want to explore the environment so we introduce some randomness into the actions
@@ -89,7 +86,7 @@ nb_success = 0
 for _ in range(episodes):
     observation, rInfo = env.reset()
     
-    # Until the agent gets stuck or reaches the goal, keep training it
+    # Until the agent gets stuck or reaches the goal, keep running it
     while True:
         # Choose the action with the highest value in the current state
         action = np.argmax(Q[observation])
@@ -113,5 +110,5 @@ for _ in range(episodes):
 end_time = time.time()
 print(f"\nTraining took {format_as_minutes_and_seconds(end_time - start_time)}")
 
-# Let's check our success rate!
+# Print the success rate of the agent
 print (f"Success rate = {nb_success/episodes*100}%")
