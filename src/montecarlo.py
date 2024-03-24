@@ -67,6 +67,8 @@ for i in range(EPISODES):
     rList.append(x)
 
     # Update the Q table using the state and action pairs as well as the reward for the episode
+    # Should this happen every few episodes and not just per episode? This feels more "Q-Learny" rather than something Monte-Carlo based
+    # Will need some more research in the future
     for (state, action) in y:
         Q2[state, action] += 1
         LEARNING_RATE = 1 / Q2[state, action]
