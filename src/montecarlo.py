@@ -1,6 +1,6 @@
 # Dylan Zemlin | 113562763
 # Machine Learning (CS 5033)
-# Reinforcement Learning Project | Monte-Carlo Algorithm
+# Reinforcement Learning Project | Monte-Carlo Algorithm (First-Visit)
 
 import gymnasium as gym
 import numpy as np
