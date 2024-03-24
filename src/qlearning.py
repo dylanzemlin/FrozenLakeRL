@@ -80,7 +80,7 @@ for i in range(EPISODES):
     # exploration_rates.append(EXPLORATION_RATE)
 
 episodes = 1000
-nb_success = 0
+reward_sum = 0
 
 # Evaluation
 for _ in range(episodes):
@@ -98,7 +98,7 @@ for _ in range(episodes):
         observation = new_state
 
         # When we get a reward, it means we solved the game
-        nb_success += reward
+        reward_sum += reward
 
         if terminated:
             break
@@ -111,4 +111,4 @@ end_time = time.time()
 print(f"\nTraining took {format_as_minutes_and_seconds(end_time - start_time)}")
 
 # Print the success rate of the agent
-print (f"Success rate = {nb_success/episodes*100}%")
+print (f"Success rate = {reward_sum/episodes*100}%")
