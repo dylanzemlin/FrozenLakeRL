@@ -52,10 +52,13 @@ for i in range(EPISODES):
             break
 
     # Calculate the total reward for the episode
+    # Is this correct? Something seems off about how the reward is calculated and the Q-Table is updated after this step.
+    # However, it appears to work. This is something that would be nice to look into later.
     G = 0
     for t in reversed(range(len(episode))):
+        # Update the total reward
         state, action, reward = episode[t]
-        G = G + reward  # Update the total reward since the episode is reversed
+        G = G + reward
         
         # Check if the state-action pair is visited for the first time
         if not any((state == x[0] and action == x[1]) for x in episode[:t]):
