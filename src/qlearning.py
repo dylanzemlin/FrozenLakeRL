@@ -111,4 +111,4 @@ end_time = time.time()
 print(f"\nTraining took {format_as_minutes_and_seconds(end_time - start_time)}")
 
 # Print the success rate of the agent
-print (f"Success rate = {reward_sum/episodes*100}%")
+print (f"Success rate = {reward_sum / episodes * 100}%")
