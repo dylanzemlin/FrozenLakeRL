@@ -70,4 +70,4 @@ for i in range(EPISODES):
     REWARD_LIST.append(G)
 
 # Calculate success rate
-print(f"Success rate = {sum(REWARD_LIST) / EPISODES}")
+print(f"Success rate = {sum(REWARD_LIST) / EPISODES * 100}")
