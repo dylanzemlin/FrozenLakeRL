@@ -18,7 +18,7 @@ env.reset()
 # Setup the Q tables for the environment and hyperparameters
 Q = np.zeros([env.observation_space.n, env.action_space.n])
 Q2 = np.zeros([env.observation_space.n, env.action_space.n])
-rList = []
+REWARD_LIST = []
 LEARNING_RATE = 1
 EPISODES = 25000
 EXPLORATION_RATE = 1
@@ -28,16 +28,16 @@ MIN_EXPLORATION_RATE = 0.0001
 
 # Start training
 for i in range(EPISODES):
-    # Print the progress
-    if i % 10000 == 0 and i != 0:
-        print(str(i) + "/" +str(EPISODES))
-
     # Reset the environment
     observation, rInfo = env.reset()
 
+    # Print the progress
+    if i % 10000 == 0:
+        print(f"\rEpisode {i+1}/{EPISODES}", end="")
+    
     # Initialize the variables
-    x = 0
-    y = []
+    X = 0
+    Y = []
 
     while True:
         # Choose an action by picking from the Q table or randomly
@@ -51,10 +51,10 @@ for i in range(EPISODES):
         new_state, reward, terminated, truncated, info = env.step(action)
 
         # Update the reward for the episode
-        x += reward
+        X += reward
 
         # Store the state and action for updating the Q table
-        y.append((observation, action))
+        Y.append((observation, action))
 
         # Update the observation
         observation = new_state
@@ -64,18 +64,21 @@ for i in range(EPISODES):
             break
 
     # Update the reward list
-    rList.append(x)
+    REWARD_LIST.append(X)
 
     # Update the Q table using the state and action pairs as well as the reward for the episode
     # Should this happen every few episodes and not just per episode? This feels more "Q-Learny" rather than something Monte-Carlo based
     # Will need some more research in the future
-    for (state, action) in y:
-        Q2[state, action] += 1
-        LEARNING_RATE = 1 / Q2[state, action]
-        Q[state, action] = Q[state, action] + LEARNING_RATE * (x - Q[state, action])
+    for (state, action) in Y:
+        # Update the learning rate such that it adapts based on secondary q table (with a bit of magic number)
+        LEARNING_RATE = 1 / Q2[state, action] * 0.975
+        # Increment the secondary q table by a bit such that the learning rate can slowly adapt as needed based on the other observations
+        Q2[state, action] += 0.835
+        # Update the Q-Table using the current q value + learning rate times a reward sum with a bit of magic number
+        Q[state, action] = Q[state, action] + LEARNING_RATE * (X - Q[state, action] * 0.985)
 
     # Update the exploration rate via a exponential decay function
     EXPLORATION_RATE = MIN_EXPLORATION_RATE + (MAX_EXPLORATION_RATE - MIN_EXPLORATION_RATE) * np.exp(-EXPLORATION_DECAY * i)
 
 # Let's check our success rate!
-print (f"Success rate = {sum(rList)/EPISODES}")
+print (f"Success rate = {sum(REWARD_LIST) / EPISODES}")
