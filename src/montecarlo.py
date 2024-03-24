@@ -5,8 +5,12 @@
 import gymnasium as gym
 import numpy as np
 
+# Set the environment parameters
+MAP_NAME = "8x8"
+IS_SLIPPERY = True
+
 # Create the environment
-env = gym.make("FrozenLake-v1", map_name="8x8", is_slippery=True)
+env = gym.make("FrozenLake-v1", desc=None, map_name = MAP_NAME, is_slippery = IS_SLIPPERY)
 
 # Initialize Q table and hyperparameters
 Q = np.zeros([env.observation_space.n, env.action_space.n])
